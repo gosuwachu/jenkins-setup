@@ -77,6 +77,13 @@ multibranchPipelineJob("${pipelineFolder}/trigger") {
             includes('main PR-*')
             excludes('')
         }
+        // Discover fork PRs — trust collaborators only
+        // Collaborator forks: use their Jenkinsfile. Non-collaborators: use target branch Jenkinsfile.
+        // The trigger Jenkinsfile also aborts CI for non-collaborators.
+        traits << 'org.jenkinsci.plugins.github__branch__source.ForkPullRequestDiscoveryTrait' {
+            strategyId(2)
+            trust(class: 'org.jenkinsci.plugins.github_branch_source.ForkPullRequestDiscoveryTrait\$TrustContributors')
+        }
         // Custom commit status context name
         traits << 'org.jenkinsci.plugins.githubScmTraitNotificationContext.NotificationContextTrait' {
             contextLabel('Jenkins')

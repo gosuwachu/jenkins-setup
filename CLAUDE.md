@@ -175,6 +175,14 @@ The GitHub App credential is used by child Jenkinsfiles (via `withCredentials`) 
 openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in key.pem -out github-app-key.pem
 ```
 
+## Fork PR Security
+
+The multibranch pipeline discovers fork PRs with `TrustContributors` trust strategy:
+- **Collaborator forks:** CI runs using their Jenkinsfile (trusted)
+- **Non-collaborator PRs:** Jenkinsfile is read from the target branch. CI is blocked unless the PR has an approved review from a collaborator. Without approval, the build is set to `NOT_BUILT`
+
+This two-layer approach ensures non-collaborators cannot run CI or inject malicious pipeline code.
+
 ## Job DSL Notes
 
 - Job DSL `targets()` only accepts relative paths (Ant GLOB), not absolute paths
