@@ -31,7 +31,7 @@ case "$1" in
     build)
         if [ -z "$2" ]; then
             echo "Usage: $0 build <job-path>"
-            echo "Example: $0 build pipeline-2-blueocean/job/pipeline"
+            echo "Example: $0 build pipeline-4b-mb/job/trigger"
             exit 1
         fi
         echo "Triggering build for $2..."
@@ -64,8 +64,8 @@ case "$1" in
         echo "  status <job-path>        Get job status"
         echo ""
         echo "Examples:"
-        echo "  $0 build pipeline-2-blueocean/job/pipeline"
-        echo "  $0 log pipeline-2-blueocean/job/pipeline 1"
-        echo "  $0 status mobile-pipeline/job/trigger"
+        echo "  $0 build pipeline-4b-mb/job/trigger"
+        echo "  $0 log pipeline-4b-mb/job/ios-build 1"
+        echo "  $0 status pipeline-4b-mb/job/trigger"
         ;;
 esac

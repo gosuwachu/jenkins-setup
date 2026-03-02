@@ -9,8 +9,6 @@ jenkins:
       users:
         - id: "admin"
           password: "admin"
-        - id: "dev1"
-          password: "dev1"
         - id: "dev2"
           password: "dev2"
 
