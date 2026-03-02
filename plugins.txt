@@ -11,3 +11,4 @@ checks-api
 github-checks
 pipeline-utility-steps
 github-scm-trait-notification-context
+generic-webhook-trigger

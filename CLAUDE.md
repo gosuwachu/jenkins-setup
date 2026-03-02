@@ -28,6 +28,23 @@ Access at http://localhost:8080
 
 Child jobs publish their own commit statuses via `POST /repos/{owner}/{repo}/statuses/{sha}`. Each child job can be individually re-triggered from Jenkins UI. The status `target_url` links directly to the child job's build page.
 
+### Comment-Triggered Jobs
+
+**iOS UI Tests** (`pipeline/ios-ui-tests`) — triggered by commenting `run-ios-ui-tests` on a PR.
+
+- Uses the **Generic Webhook Trigger** plugin to receive GitHub `issue_comment` webhook events
+- Webhook URL: `https://<ngrok-url>/generic-webhook-trigger/invoke?token=ios-ui-tests-trigger`
+- Resolves the PR branch and SHA via GitHub API (the `issue_comment` payload doesn't include branch info)
+- Verifies the commenter is a repo collaborator before running
+- Publishes `ci/ios-ui-tests` commit status on the PR head SHA
+- Can also be triggered manually from Jenkins UI by setting `PR_NUMBER` parameter
+
+**GitHub webhook setup for comment triggers:**
+1. In GitHub repo Settings > Webhooks > Add webhook (separate from the push/PR webhook)
+2. Payload URL: `https://<ngrok-url>/generic-webhook-trigger/invoke?token=ios-ui-tests-trigger`
+3. Content type: `application/json`
+4. Events: Select only "Issue comments"
+
 ## Project Structure
 
 ```
@@ -199,3 +216,5 @@ This two-layer approach ensures non-collaborators cannot run CI or inject malici
 **Jobs not visible to users** — Ensure folder has `hudson.model.Item.Discover` permission for the user (in addition to `Item.Read`).
 
 **New Job DSL not taking effect after `docker-compose build`** — The `jenkins_home` volume persists old files. Either `docker cp` the updated files into the running container, or reset the volume with `docker-compose down -v && docker-compose up -d`.
+
+**ios-ui-tests not triggering from PR comment** — Ensure the GitHub webhook is configured for `issue_comment` events pointing to `/generic-webhook-trigger/invoke?token=ios-ui-tests-trigger` (this is a separate webhook from the push/PR one).

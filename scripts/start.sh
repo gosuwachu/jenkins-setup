@@ -64,6 +64,7 @@ NGROK_URL=$(curl -s http://localhost:4040/api/tunnels 2>/dev/null | python3 -c "
 if [ -n "$NGROK_URL" ]; then
     echo "ngrok tunnel: $NGROK_URL"
     echo "GitHub webhook URL: $NGROK_URL/github-webhook/"
+    echo "Generic webhook URL: $NGROK_URL/generic-webhook-trigger/invoke?token=ios-ui-tests-trigger"
     echo "ngrok dashboard: http://localhost:4040"
 else
     echo "ngrok: not running (set NGROK_AUTHTOKEN in .env to enable)"

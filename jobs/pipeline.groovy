@@ -119,6 +119,81 @@ multibranchPipelineJob("${pipelineFolder}/trigger") {
     }
 }
 
+// iOS UI Tests — standalone, triggered by PR comment "run-ios-ui-tests" via Generic Webhook Trigger
+pipelineJob("${pipelineFolder}/ios-ui-tests") {
+    displayName('iOS UI Tests (Comment-Triggered)')
+    description('Runs iOS UI tests when "run-ios-ui-tests" is commented on a PR')
+
+    parameters {
+        stringParam('PR_NUMBER', '', 'Pull request number (set by webhook)')
+        stringParam('COMMENT_AUTHOR', '', 'GitHub username of the commenter (set by webhook)')
+    }
+
+    triggers {
+        genericTrigger {
+            genericVariables {
+                genericVariable {
+                    key('PR_NUMBER')
+                    value('$.issue.number')
+                    expressionType('JSONPath')
+                    regexpFilter('')
+                    defaultValue('')
+                }
+                genericVariable {
+                    key('COMMENT_BODY')
+                    value('$.comment.body')
+                    expressionType('JSONPath')
+                    regexpFilter('')
+                    defaultValue('')
+                }
+                genericVariable {
+                    key('ACTION')
+                    value('$.action')
+                    expressionType('JSONPath')
+                    regexpFilter('')
+                    defaultValue('')
+                }
+                genericVariable {
+                    key('IS_PULL_REQUEST')
+                    value('$.issue.pull_request.url')
+                    expressionType('JSONPath')
+                    regexpFilter('')
+                    defaultValue('')
+                }
+                genericVariable {
+                    key('COMMENT_AUTHOR')
+                    value('$.comment.user.login')
+                    expressionType('JSONPath')
+                    regexpFilter('')
+                    defaultValue('')
+                }
+            }
+            token('ios-ui-tests-trigger')
+            causeString('PR #$PR_NUMBER comment by $COMMENT_AUTHOR: run-ios-ui-tests')
+            regexpFilterText('$ACTION $COMMENT_BODY $IS_PULL_REQUEST')
+            regexpFilterExpression('^created run-ios-ui-tests https.*$')
+            printContributedVariables(true)
+            printPostContent(false)
+            silentResponse(false)
+        }
+    }
+
+    definition {
+        cpsScm {
+            scm {
+                git {
+                    remote {
+                        url(githubRepoUrl)
+                        credentials('github-pat')
+                    }
+                    branches('main')
+                }
+            }
+            scriptPath('ci/ios-ui-tests.Jenkinsfile')
+        }
+    }
+}
+
 // ============================================
 // SEED JOB
 // ============================================
