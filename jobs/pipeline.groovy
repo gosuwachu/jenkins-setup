@@ -92,29 +92,29 @@ multibranchPipelineJob("${pipelineFolder}/trigger") {
     }
 }
 
-// Child jobs - regular pipelineJobs that publish their own commit statuses
+// Omnibus child job — runs the Jenkinsfile specified by the JENKINSFILE parameter
 // Uses github-pat (not github-app) for SCM checkout to prevent auto-publishing checks.
 // Child Jenkinsfiles still use github-app via withCredentials for the commit status API.
-['ios-build', 'ios-deploy', 'android-build', 'android-deploy',
- 'ios-unit-tests', 'android-unit-tests', 'ios-linter', 'android-linter'].each { jobName ->
-    pipelineJob("${pipelineFolder}/${jobName}") {
-        displayName(jobName.split('-').collect { it.capitalize() }.join(' '))
-        parameters {
-            stringParam('BRANCH_NAME', 'main', 'Branch to build (passed by orchestrator)')
-        }
-        definition {
-            cpsScm {
-                scm {
-                    git {
-                        remote {
-                            url(githubRepoUrl)
-                            credentials('github-pat')
-                        }
-                        branches('${BRANCH_NAME}')
+pipelineJob("${pipelineFolder}/omnibus") {
+    displayName('Pipeline Runner')
+    description('Runs a child Jenkinsfile specified by the JENKINSFILE parameter')
+    concurrentBuild()
+    parameters {
+        stringParam('BRANCH_NAME', 'main', 'Branch to build (passed by orchestrator)')
+        stringParam('JENKINSFILE', '', 'Path to Jenkinsfile (e.g., ci/ios-build.Jenkinsfile)')
+    }
+    definition {
+        cpsScm {
+            scm {
+                git {
+                    remote {
+                        url(githubRepoUrl)
+                        credentials('github-pat')
                     }
+                    branches('${BRANCH_NAME}')
                 }
-                scriptPath("ci/${jobName}.Jenkinsfile")
             }
+            scriptPath('${JENKINSFILE}')
         }
     }
 }
