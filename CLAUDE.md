@@ -23,11 +23,11 @@ Access at http://localhost:8080
 - **Folder:** `pipeline`
 - **GitHub repo:** [jenkinsfiles-test-app](https://github.com/gosuwachu/jenkinsfiles-test-app)
 - **CI repo:** [jenkinsfiles-test-app-ci](https://github.com/gosuwachu/jenkinsfiles-test-app-ci) — child Jenkinsfiles (CI step definitions)
-- **How it works:** Multibranch orchestrator discovers branches/PRs in the app repo, triggers the omnibus `pipelineJob` with a `JENKINSFILE` parameter pointing to a Jenkinsfile in the CI repo; each child Jenkinsfile checks out the app repo and publishes its own GitHub commit status (not Checks API)
+- **How it works:** Multibranch orchestrator discovers branches/PRs in the app repo, triggers the omnibus `pipelineJob` with `JENKINSFILE` (path to Jenkinsfile in CI repo) and `COMMIT_SHA` (pinned app repo commit) parameters; each child Jenkinsfile checks out the exact commit and publishes its own GitHub commit status (not Checks API)
 - **Pros:** Each child job owns its status reporting, `target_url` links to child job build page, individually re-triggerable from Jenkins
 - **Cons:** No "Re-run" button from GitHub (commit statuses don't support it), no rich check details
 
-Child jobs publish their own commit statuses via `POST /repos/{owner}/{repo}/statuses/{sha}`. Each child job can be individually re-triggered from Jenkins UI. The status `target_url` links directly to the child job's build page.
+Child jobs publish their own commit statuses via `POST /repos/{owner}/{repo}/statuses/{sha}`. The orchestrator passes `COMMIT_SHA` so all child jobs checkout and report on the exact same commit, avoiding race conditions from branch updates. Each child job can be individually re-triggered from Jenkins UI. The status `target_url` links directly to the child job's build page.
 
 ### Comment-Triggered Jobs
 
