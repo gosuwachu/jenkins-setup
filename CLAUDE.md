@@ -67,7 +67,9 @@ Child jobs publish their own commit statuses via `POST /repos/{owner}/{repo}/sta
 
 **Companion repos:**
 - [jenkinsfiles-test-app](https://github.com/gosuwachu/jenkinsfiles-test-app) — app repo, contains `ci/trigger.Jenkinsfile` (orchestrator)
+    - There is a clone of this repo here: /home/piotr/src/jenkinsfiles-test-app (you can use it to make changes)
 - [jenkinsfiles-test-app-ci](https://github.com/gosuwachu/jenkinsfiles-test-app-ci) — CI repo, contains child Jenkinsfiles in `ci/` (step definitions)
+    - There is a clone of this repo here: /home/piotr/src/jenkinsfiles-test-app-ci (you can use it to make changes)
 
 ## Common Commands
 
