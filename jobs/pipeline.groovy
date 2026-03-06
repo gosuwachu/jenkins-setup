@@ -103,6 +103,7 @@ pipelineJob("${pipelineFolder}/omnibus") {
     description('Runs a child Jenkinsfile specified by the JENKINSFILE parameter')
     parameters {
         stringParam('BRANCH_NAME', 'main', 'Branch to build (passed by orchestrator)')
+        stringParam('COMMIT_SHA', '', 'App repo commit SHA (passed by orchestrator)')
         stringParam('JENKINSFILE', '', 'Path to Jenkinsfile (e.g., ci/ios/ios-build.Jenkinsfile)')
     }
     definition {
