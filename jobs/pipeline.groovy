@@ -198,6 +198,56 @@ pipelineJob("${pipelineFolder}/ios-ui-tests") {
 }
 
 // ============================================
+// CI Repo Self-Test (runs pytest on PRs and main)
+// ============================================
+
+multibranchPipelineJob('ci-repo') {
+    displayName('CI Repo Tests')
+    description('Runs pytest on jenkinsfiles-test-app-ci PRs and main branch')
+
+    branchSources {
+        github {
+            id('ci-repo-github')
+            scanCredentialsId('github-pat')
+            repoOwner(githubRepoOwner)
+            repository(ciRepoName)
+        }
+    }
+
+    factory {
+        workflowBranchProjectFactory {
+            scriptPath('Jenkinsfile')
+        }
+    }
+
+    orphanedItemStrategy {
+        discardOldItems {
+            numToKeep(10)
+        }
+    }
+
+    triggers {
+        periodicFolderTrigger {
+            interval('5m')
+        }
+    }
+
+    configure {
+        def traits = it / sources / data / 'jenkins.branch.BranchSource' / source / traits
+        traits << 'org.jenkinsci.plugins.github__branch__source.BranchDiscoveryTrait' {
+            strategyId(3)
+        }
+        traits << 'org.jenkinsci.plugins.github__branch__source.OriginPullRequestDiscoveryTrait' {
+            strategyId(2)
+        }
+        traits << 'jenkins.scm.impl.trait.WildcardSCMHeadFilterTrait' {
+            includes('main PR-*')
+            excludes('')
+        }
+    }
+}
+
+// ============================================
 // SEED JOB
 // ============================================
 
