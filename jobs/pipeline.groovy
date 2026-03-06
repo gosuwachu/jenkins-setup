@@ -103,7 +103,7 @@ pipelineJob("${pipelineFolder}/omnibus") {
     description('Runs a child Jenkinsfile specified by the JENKINSFILE parameter')
     parameters {
         stringParam('BRANCH_NAME', 'main', 'Branch to build (passed by orchestrator)')
-        stringParam('JENKINSFILE', '', 'Path to Jenkinsfile (e.g., ci/ios-build.Jenkinsfile)')
+        stringParam('JENKINSFILE', '', 'Path to Jenkinsfile (e.g., ci/ios/ios-build.Jenkinsfile)')
     }
     definition {
         cpsScm {
@@ -191,7 +191,7 @@ pipelineJob("${pipelineFolder}/ios-ui-tests") {
                     branches('main')
                 }
             }
-            scriptPath('ci/ios-ui-tests.Jenkinsfile')
+            scriptPath('ci/ios/ios-ui-tests.Jenkinsfile')
         }
     }
 }
