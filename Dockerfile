@@ -19,6 +19,6 @@ COPY jobs/ /var/jenkins_home/jobs-dsl/
 
 # Install Python 3
 USER root
-RUN apt-get update && apt-get install -y python3 && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y python3 python3-venv && rm -rf /var/lib/apt/lists/*
 RUN chown -R jenkins:jenkins /var/jenkins_home/jobs-dsl/
 USER jenkins
