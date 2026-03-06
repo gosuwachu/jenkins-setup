@@ -17,7 +17,8 @@ COPY init.groovy.d/ /var/jenkins_home/init.groovy.d/
 # Copy Job DSL scripts
 COPY jobs/ /var/jenkins_home/jobs-dsl/
 
-# Set proper permissions
+# Install Python 3
 USER root
+RUN apt-get update && apt-get install -y python3 && rm -rf /var/lib/apt/lists/*
 RUN chown -R jenkins:jenkins /var/jenkins_home/jobs-dsl/
 USER jenkins
