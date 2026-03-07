@@ -104,6 +104,7 @@ pipelineJob("${pipelineFolder}/omnibus") {
     parameters {
         stringParam('BRANCH_NAME', 'main', 'Branch to build (passed by orchestrator)')
         stringParam('COMMIT_SHA', '', 'App repo commit SHA (passed by orchestrator)')
+        stringParam('PR_NUMBER', '', 'Pull request number (passed by orchestrator, empty for branch builds)')
         stringParam('JENKINSFILE', '', 'Path to Jenkinsfile (e.g., ci/ios/ios-build.Jenkinsfile)')
         stringParam('CI_BRANCH', 'main', 'CI repo branch to checkout Jenkinsfiles from')
     }
