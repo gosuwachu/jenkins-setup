@@ -115,8 +115,8 @@ Use `scripts/jenkins-api.sh` for API interactions (handles crumb authentication 
 
 ## Modifying Jobs
 
-Edit `jobs/pipeline.groovy` then run the **seed-job** in Jenkins:
-- http://localhost:8080/job/seed-job/ → Build Now
+Edit `jobs/pipeline.groovy`, push to GitHub, then run the **seed-job** in Jenkins (it pulls from Git automatically):
+- `./scripts/jenkins-api.sh build seed-job`
 
 For orchestrator changes, edit `vars/triggerPipeline.groovy` in the CI repo and push — the stub in the app repo loads it dynamically via shared library. For child Jenkinsfile changes, also push to the CI repo (`mobile-app-ci`) and re-run — the omnibus job pulls from the CI repo at `main`.
 
@@ -228,7 +228,7 @@ Always follow this workflow after completing code changes:
 1. **Commit** changes in all affected repos
 2. **Push** companion repos (mobile-app, mobile-app-ci) since Jenkins pulls from GitHub
 3. **Deploy** to Jenkins:
-   - If only `jobs/pipeline.groovy` changed: `docker cp jobs/pipeline.groovy jenkins-test:/var/jenkins_home/jobs-dsl/pipeline.groovy` then `./scripts/jenkins-api.sh build seed-job`
+   - If only `jobs/pipeline.groovy` changed: `./scripts/jenkins-api.sh build seed-job` (pulls from Git)
    - If `Dockerfile`, `plugins.txt`, or `casc/jenkins.yaml` changed: `docker-compose build && docker-compose up -d`
 4. **Test** by triggering a build: `./scripts/jenkins-api.sh build mobile-app/trigger/main CI_BRANCH=main`
 5. **Verify** results via `./scripts/jenkins-api.sh status` and `./scripts/jenkins-api.sh log`
@@ -239,6 +239,6 @@ Always follow this workflow after completing code changes:
 
 **Jobs not visible to users** — Ensure folder has `hudson.model.Item.Discover` permission for the user (in addition to `Item.Read`).
 
-**New Job DSL not taking effect after `docker-compose build`** — The `jenkins_home` volume persists old files. Either `docker cp` the updated files into the running container, or reset the volume with `docker-compose down -v && docker-compose up -d`.
+**New Job DSL not taking effect** — Push changes to GitHub first, then run the seed job (`./scripts/jenkins-api.sh build seed-job`). The seed job pulls `pipeline.groovy` from the Git repo.
 
 **ios-ui-tests not triggering from PR comment** — Ensure the GitHub webhook is configured for `issue_comment` events pointing to `/generic-webhook-trigger/invoke?token=ios-ui-tests-trigger` (this is a separate webhook from the push/PR one).

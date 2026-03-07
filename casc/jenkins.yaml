@@ -1,5 +1,5 @@
 jenkins:
-  systemMessage: "Jenkins Test Environment - Configured automatically via JCasC"
+  systemMessage: ""
   numExecutors: 4
   quietPeriod: 0
   mode: NORMAL
@@ -63,4 +63,22 @@ unclassified:
     url: http://localhost:8080/
 
 jobs:
-  - file: /var/jenkins_home/jobs-dsl/pipeline.groovy
+  - script: |
+      pipelineJob('seed-job') {
+          displayName('Seed Job')
+          description('Regenerates all jobs from DSL scripts')
+          definition {
+              cpsScm {
+                  scm {
+                      git {
+                          remote {
+                              url('https://github.com/gosuwachu/jenkins-setup.git')
+                              credentials('github-pat')
+                          }
+                          branches('main')
+                      }
+                  }
+                  scriptPath('jobs/seed.Jenkinsfile')
+              }
+          }
+      }

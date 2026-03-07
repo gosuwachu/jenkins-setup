@@ -14,14 +14,10 @@ ENV CASC_JENKINS_CONFIG=/var/jenkins_home/casc_configs/
 # Copy init scripts (run at Jenkins startup)
 COPY init.groovy.d/ /var/jenkins_home/init.groovy.d/
 
-# Copy Job DSL scripts
-COPY jobs/ /var/jenkins_home/jobs-dsl/
-
 # Install Python 3 and Node.js 22 (npm-groovy-lint requires >= 22.15)
 USER root
 RUN apt-get update && apt-get install -y python3 python3-venv curl && \
     curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/*
-RUN chown -R jenkins:jenkins /var/jenkins_home/jobs-dsl/
 USER jenkins
