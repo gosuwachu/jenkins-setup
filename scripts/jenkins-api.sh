@@ -116,7 +116,7 @@ case "$1" in
         echo ""
         echo "Job paths use slash separators (auto-converted to /job/ paths):"
         echo "  $0 build mobile-app/trigger/main CI_BRANCH=main"
-        echo "  $0 log mobile-app/omnibus 5"
+        echo "  $0 log mobile-app-support/omnibus 5"
         echo "  $0 status mobile-app/trigger/main"
         echo "  $0 jobs mobile-app"
         echo "  $0 scan mobile-app/trigger"

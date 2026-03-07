@@ -31,7 +31,7 @@ Child jobs publish their own commit statuses via `POST /repos/{owner}/{repo}/sta
 
 ### Comment-Triggered Jobs
 
-**iOS UI Tests** (`mobile-app/ios-ui-tests`) — triggered by commenting `run-ios-ui-tests` on a PR.
+**iOS UI Tests** (`mobile-app-support/ios-ui-tests`) — triggered by commenting `run-ios-ui-tests` on a PR.
 
 - Uses the **Generic Webhook Trigger** plugin to receive GitHub `issue_comment` webhook events
 - Webhook URL: `https://<ngrok-url>/generic-webhook-trigger/invoke?token=ios-ui-tests-trigger`
@@ -96,7 +96,7 @@ Use `scripts/jenkins-api.sh` for API interactions (handles crumb authentication 
 ./scripts/jenkins-api.sh build mobile-app/trigger/main CI_BRANCH=main
 
 # Get console log (default: lastBuild)
-./scripts/jenkins-api.sh log mobile-app/omnibus 5
+./scripts/jenkins-api.sh log mobile-app-support/omnibus 5
 
 # Get job status
 ./scripts/jenkins-api.sh status mobile-app/trigger/main
