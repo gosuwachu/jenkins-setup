@@ -104,7 +104,7 @@ pipelineJob("${pipelineFolder}/omnibus") {
     parameters {
         stringParam('BRANCH_NAME', 'main', 'Branch to build (passed by orchestrator)')
         stringParam('COMMIT_SHA', '', 'App repo commit SHA (passed by orchestrator)')
-        stringParam('PR_NUMBER', '', 'Pull request number (passed by orchestrator, empty for branch builds)')
+        stringParam('CHANGE_ID', '', 'Pull request number (passed by orchestrator, empty for branch builds)')
         stringParam('JENKINSFILE', '', 'Path to Jenkinsfile (e.g., ci/ios/ios-build.Jenkinsfile)')
         stringParam('CI_BRANCH', 'main', 'CI repo branch to checkout Jenkinsfiles from')
     }
@@ -130,7 +130,7 @@ pipelineJob("${pipelineFolder}/ios-ui-tests") {
     description('Runs iOS UI tests when "run-ios-ui-tests" is commented on a PR')
 
     parameters {
-        stringParam('PR_NUMBER', '', 'Pull request number (set by webhook)')
+        stringParam('CHANGE_ID', '', 'Pull request number (set by webhook)')
         stringParam('COMMENT_AUTHOR', '', 'GitHub username of the commenter (set by webhook)')
     }
 
@@ -138,7 +138,7 @@ pipelineJob("${pipelineFolder}/ios-ui-tests") {
         genericTrigger {
             genericVariables {
                 genericVariable {
-                    key('PR_NUMBER')
+                    key('CHANGE_ID')
                     value('$.issue.number')
                     expressionType('JSONPath')
                     regexpFilter('')
@@ -174,7 +174,7 @@ pipelineJob("${pipelineFolder}/ios-ui-tests") {
                 }
             }
             token('ios-ui-tests-trigger')
-            causeString('PR #$PR_NUMBER comment by $COMMENT_AUTHOR: run-ios-ui-tests')
+            causeString('PR #$CHANGE_ID comment by $COMMENT_AUTHOR: run-ios-ui-tests')
             regexpFilterText('$ACTION $COMMENT_BODY $IS_PULL_REQUEST')
             regexpFilterExpression('^created run-ios-ui-tests https.*$')
             printContributedVariables(true)

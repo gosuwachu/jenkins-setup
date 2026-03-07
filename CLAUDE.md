@@ -23,7 +23,7 @@ Access at http://localhost:8080
 - **Folder:** `pipeline`
 - **GitHub repo:** [jenkinsfiles-test-app](https://github.com/gosuwachu/jenkinsfiles-test-app)
 - **CI repo:** [jenkinsfiles-test-app-ci](https://github.com/gosuwachu/jenkinsfiles-test-app-ci) — child Jenkinsfiles (CI step definitions)
-- **How it works:** Multibranch orchestrator discovers branches/PRs in the app repo. A thin stub `ci/trigger.Jenkinsfile` in the app repo loads the orchestrator logic from the CI repo via a Jenkins Shared Library (`vars/triggerPipeline.groovy`), using an inline `library` retriever (no pre-registration needed). The orchestrator triggers the omnibus `pipelineJob` with `JENKINSFILE` (path to Jenkinsfile in CI repo), `COMMIT_SHA` (pinned app repo commit), and `CI_BRANCH` (CI repo branch, defaults to `main`) parameters; each child Jenkinsfile checks out the exact commit and publishes its own GitHub commit status (not Checks API)
+- **How it works:** Multibranch orchestrator discovers branches/PRs in the app repo. A thin stub `ci/trigger.Jenkinsfile` in the app repo loads the orchestrator logic from the CI repo via a Jenkins Shared Library (`vars/triggerPipeline.groovy`), using an inline `library` retriever (no pre-registration needed). The orchestrator triggers the omnibus `pipelineJob` with `JENKINSFILE` (path to Jenkinsfile in CI repo), `COMMIT_SHA` (pinned app repo commit), `CHANGE_ID` (PR number), and `CI_BRANCH` (CI repo branch, defaults to `main`) parameters; each child Jenkinsfile checks out the exact commit and publishes its own GitHub commit status (not Checks API)
 - **Pros:** Each child job owns its status reporting, `target_url` links to child job build page, individually re-triggerable from Jenkins
 - **Cons:** No "Re-run" button from GitHub (commit statuses don't support it), no rich check details
 
@@ -38,7 +38,7 @@ Child jobs publish their own commit statuses via `POST /repos/{owner}/{repo}/sta
 - Resolves the PR branch and SHA via GitHub API (the `issue_comment` payload doesn't include branch info)
 - Verifies the commenter is a repo collaborator before running
 - Publishes `ci/ios-ui-tests` commit status on the PR head SHA
-- Can also be triggered manually from Jenkins UI by setting `PR_NUMBER` parameter
+- Can also be triggered manually from Jenkins UI by setting `CHANGE_ID` parameter
 
 **GitHub webhook setup for comment triggers:**
 1. In GitHub repo Settings > Webhooks > Add webhook (separate from the push/PR webhook)
@@ -67,9 +67,9 @@ Child jobs publish their own commit statuses via `POST /repos/{owner}/{repo}/sta
 
 **Companion repos:**
 - [jenkinsfiles-test-app](https://github.com/gosuwachu/jenkinsfiles-test-app) — app repo, contains `ci/trigger.Jenkinsfile` (thin stub that loads shared library from CI repo)
-    - There is a clone of this repo here: /home/piotr/src/jenkinsfiles-test-app (you can use it to make changes)
+    - There is a clone of this repo here: /home/piotr/src/jenkins/jenkinsfiles-test-app (you can use it to make changes)
 - [jenkinsfiles-test-app-ci](https://github.com/gosuwachu/jenkinsfiles-test-app-ci) — CI repo, contains orchestrator (`vars/triggerPipeline.groovy` shared library) and child Jenkinsfiles in `ci/ios/` and `ci/android/` (step definitions)
-    - There is a clone of this repo here: /home/piotr/src/jenkinsfiles-test-app-ci (you can use it to make changes)
+    - There is a clone of this repo here: /home/piotr/src/jenkins/jenkinsfiles-test-app-ci (you can use it to make changes)
 
 ## Common Commands
 
