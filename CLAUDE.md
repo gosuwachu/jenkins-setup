@@ -14,13 +14,13 @@ Access at http://localhost:8080
 | User | Password | Access |
 |------|----------|--------|
 | admin | admin | Full administrator |
-| dev2 | dev2 | pipeline |
+| dev2 | dev2 | mobile-app |
 
 ## Pipeline Architecture
 
 **Orchestrator + Commit Status API (GitHub)**
 
-- **Folder:** `pipeline`
+- **Folder:** `mobile-app`
 - **GitHub repo:** [mobile-app](https://github.com/gosuwachu/mobile-app)
 - **CI repo:** [mobile-app-ci](https://github.com/gosuwachu/mobile-app-ci) — child Jenkinsfiles (CI step definitions)
 - **How it works:** Multibranch orchestrator discovers branches/PRs in the app repo. A thin stub `ci/trigger.Jenkinsfile` in the app repo loads the orchestrator logic from the CI repo via a Jenkins Shared Library (`vars/triggerPipeline.groovy`), using an inline `library` retriever (no pre-registration needed). The orchestrator triggers the omnibus `pipelineJob` with `JENKINSFILE` (path to Jenkinsfile in CI repo), `COMMIT_SHA` (pinned app repo commit), `CHANGE_ID` (PR number), and `CI_BRANCH` (CI repo branch, defaults to `main`) parameters; each child Jenkinsfile checks out the exact commit and publishes its own GitHub commit status (not Checks API)
@@ -31,7 +31,7 @@ Child jobs publish their own commit statuses via `POST /repos/{owner}/{repo}/sta
 
 ### Comment-Triggered Jobs
 
-**iOS UI Tests** (`pipeline/ios-ui-tests`) — triggered by commenting `run-ios-ui-tests` on a PR.
+**iOS UI Tests** (`mobile-app/ios-ui-tests`) — triggered by commenting `run-ios-ui-tests` on a PR.
 
 - Uses the **Generic Webhook Trigger** plugin to receive GitHub `issue_comment` webhook events
 - Webhook URL: `https://<ngrok-url>/generic-webhook-trigger/invoke?token=ios-ui-tests-trigger`
@@ -93,14 +93,14 @@ Use `scripts/jenkins-api.sh` for API interactions (handles crumb authentication 
 
 ```bash
 # Trigger a build
-./scripts/jenkins-api.sh build pipeline/job/trigger
+./scripts/jenkins-api.sh build mobile-app/job/trigger
 
 # Get console log (default: lastBuild)
-./scripts/jenkins-api.sh log pipeline/job/ios-build
-./scripts/jenkins-api.sh log pipeline/job/ios-build 5
+./scripts/jenkins-api.sh log mobile-app/job/ios-build
+./scripts/jenkins-api.sh log mobile-app/job/ios-build 5
 
 # Get job status
-./scripts/jenkins-api.sh status pipeline/job/trigger
+./scripts/jenkins-api.sh status mobile-app/job/trigger
 ```
 
 **Note:** Job paths use `/job/` between folder and job name (e.g., `folder/job/jobname`).
@@ -222,7 +222,7 @@ Always follow this workflow after completing code changes:
 3. **Deploy** to Jenkins:
    - If only `jobs/pipeline.groovy` changed: `docker cp jobs/pipeline.groovy jenkins-test:/var/jenkins_home/jobs-dsl/pipeline.groovy` then `./scripts/jenkins-api.sh build seed-job`
    - If `Dockerfile`, `plugins.txt`, or `casc/jenkins.yaml` changed: `docker-compose build && docker-compose up -d`
-4. **Test** by triggering a build: `./scripts/jenkins-api.sh build pipeline/job/trigger/job/main CI_BRANCH=main`
+4. **Test** by triggering a build: `./scripts/jenkins-api.sh build mobile-app/job/trigger/job/main CI_BRANCH=main`
 5. **Verify** results via `./scripts/jenkins-api.sh status` and `./scripts/jenkins-api.sh log`
 
 ## Troubleshooting

@@ -17,10 +17,10 @@ def ciRepoUrl = "https://github.com/${githubRepoOwner}/${ciRepoName}.git"
 // Child jobs publish their own GitHub commit statuses (not Checks API)
 // ============================================
 
-def pipelineFolder = 'pipeline'
+def pipelineFolder = 'mobile-app'
 
 folder(pipelineFolder) {
-    description('Orchestrator multibranch + child jobs with commit status API (GitHub)')
+    displayName('Mobile App')
     authorization {
         userPermissions('dev2', [
             'hudson.model.Item.Discover',
@@ -34,8 +34,8 @@ folder(pipelineFolder) {
 // Orchestrator - multibranch, discovers branches/PRs
 // Uses github-pat (not github-app) to prevent github-checks plugin from auto-publishing checks
 multibranchPipelineJob("${pipelineFolder}/trigger") {
-    displayName('Pipeline Trigger (Multibranch)')
-    description('Orchestrator - discovers branches/PRs, triggers child jobs (commit status variant)')
+    displayName('CI Trigger')
+    description('Orchestrator - runs CI checks on the main branch, discovers PRs')
 
     branchSources {
         github {
@@ -99,8 +99,8 @@ multibranchPipelineJob("${pipelineFolder}/trigger") {
 // Uses github-pat (not github-app) for SCM checkout to prevent auto-publishing checks.
 // Child Jenkinsfiles still use github-app via withCredentials for the commit status API.
 pipelineJob("${pipelineFolder}/omnibus") {
-    displayName('Pipeline Runner')
-    description('Runs a child Jenkinsfile specified by the JENKINSFILE parameter')
+    displayName('CI Checks Runner')
+    description('Runs individual CI checks by loading Jenkinsfile specified by the JENKINSFILE parameter')
     parameters {
         stringParam('BRANCH_NAME', 'main', 'Branch to build (passed by orchestrator)')
         stringParam('COMMIT_SHA', '', 'App repo commit SHA (passed by orchestrator)')
@@ -127,7 +127,7 @@ pipelineJob("${pipelineFolder}/omnibus") {
 
 // iOS UI Tests — standalone, triggered by PR comment "run-ios-ui-tests" via Generic Webhook Trigger
 pipelineJob("${pipelineFolder}/ios-ui-tests") {
-    displayName('iOS UI Tests (Comment-Triggered)')
+    displayName('iOS UI Tests')
     description('Runs iOS UI tests when "run-ios-ui-tests" is commented on a PR')
 
     parameters {
@@ -204,9 +204,9 @@ pipelineJob("${pipelineFolder}/ios-ui-tests") {
 // CI Repo Self-Test (runs pytest on PRs and main)
 // ============================================
 
-multibranchPipelineJob('ci-repo') {
-    displayName('CI Repo Tests')
-    description('Runs pytest on mobile-app-ci PRs and main branch')
+multibranchPipelineJob("${pipelineFolder}/ci-repo") {
+    displayName('CI Repo')
+    description('Runs CI on mobile-app-ci PRs and main branch')
 
     branchSources {
         github {
@@ -256,7 +256,7 @@ multibranchPipelineJob('ci-repo') {
 
 job('seed-job') {
     displayName('Seed Job')
-    description('Regenerates all pipeline jobs from DSL scripts')
+    description('Regenerates all jobs from DSL scripts')
     steps {
         shell('cp /var/jenkins_home/jobs-dsl/*.groovy .')
         jobDsl {

@@ -31,8 +31,8 @@ case "$1" in
     build)
         if [ -z "$2" ]; then
             echo "Usage: $0 build <job-path> [param=value ...]"
-            echo "Example: $0 build pipeline/job/trigger"
-            echo "Example: $0 build pipeline/job/trigger/job/main CI_BRANCH=main"
+            echo "Example: $0 build mobile-app/job/trigger"
+            echo "Example: $0 build mobile-app/job/trigger/job/main CI_BRANCH=main"
             exit 1
         fi
         JOB_PATH="$2"
@@ -76,8 +76,8 @@ case "$1" in
         echo "  status <job-path>        Get job status"
         echo ""
         echo "Examples:"
-        echo "  $0 build pipeline/job/trigger"
-        echo "  $0 log pipeline/job/ios-build 1"
-        echo "  $0 status pipeline/job/trigger"
+        echo "  $0 build mobile-app/job/trigger"
+        echo "  $0 log mobile-app/job/ios-build 1"
+        echo "  $0 status mobile-app/job/trigger"
         ;;
 esac
