@@ -217,8 +217,8 @@ pipelineJob("${supportFolder}/ios-ui-tests") {
 // Alpha Build Pipelines (manually triggered)
 // ============================================
 
-pipelineJob("${supportFolder}/ios-alpha") {
-    displayName('iOS Alpha Build')
+pipelineJob("${pipelineFolder}/ios-alpha") {
+    displayName('iOS Alpha Pipeline')
     description('Manually triggered iOS alpha build — builds and deploys iOS')
     parameters {
         stringParam('BRANCH_NAME', 'main', 'Branch to build')
@@ -241,8 +241,8 @@ pipelineJob("${supportFolder}/ios-alpha") {
     }
 }
 
-pipelineJob("${supportFolder}/android-alpha") {
-    displayName('Android Alpha Build')
+pipelineJob("${pipelineFolder}/android-alpha") {
+    displayName('Android Alpha Pipeline')
     description('Manually triggered Android alpha build — builds and deploys Android')
     parameters {
         stringParam('BRANCH_NAME', 'main', 'Branch to build')
