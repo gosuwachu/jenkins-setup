@@ -266,6 +266,58 @@ pipelineJob("${pipelineFolder}/android-alpha") {
 }
 
 // ============================================
+// Production Build Pipelines (manually triggered)
+// ============================================
+
+pipelineJob("${pipelineFolder}/ios-production") {
+    displayName('iOS Production Pipeline')
+    description('Manually triggered iOS production build — builds and deploys iOS')
+    parameters {
+        stringParam('BRANCH_NAME', 'main', 'Branch to build')
+        stringParam('COMMIT_SHA', '', 'App repo commit SHA (leave empty for branch HEAD)')
+        stringParam('CI_BRANCH', 'main', 'CI repo branch to checkout Jenkinsfiles from')
+    }
+    definition {
+        cpsScm {
+            scm {
+                git {
+                    remote {
+                        url(ciRepoUrl)
+                        credentials('github-pat')
+                    }
+                    branches('${CI_BRANCH}')
+                }
+            }
+            scriptPath('ci/production/ios-production.Jenkinsfile')
+        }
+    }
+}
+
+pipelineJob("${pipelineFolder}/android-production") {
+    displayName('Android Production Pipeline')
+    description('Manually triggered Android production build — builds and deploys Android')
+    parameters {
+        stringParam('BRANCH_NAME', 'main', 'Branch to build')
+        stringParam('COMMIT_SHA', '', 'App repo commit SHA (leave empty for branch HEAD)')
+        stringParam('CI_BRANCH', 'main', 'CI repo branch to checkout Jenkinsfiles from')
+    }
+    definition {
+        cpsScm {
+            scm {
+                git {
+                    remote {
+                        url(ciRepoUrl)
+                        credentials('github-pat')
+                    }
+                    branches('${CI_BRANCH}')
+                }
+            }
+            scriptPath('ci/production/android-production.Jenkinsfile')
+        }
+    }
+}
+
+// ============================================
 // CI Repo Self-Test (runs pytest on PRs and main)
 // ============================================
 
