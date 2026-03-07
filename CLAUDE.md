@@ -93,17 +93,25 @@ Use `scripts/jenkins-api.sh` for API interactions (handles crumb authentication 
 
 ```bash
 # Trigger a build
-./scripts/jenkins-api.sh build mobile-app/job/trigger
+./scripts/jenkins-api.sh build mobile-app/trigger/main CI_BRANCH=main
 
 # Get console log (default: lastBuild)
-./scripts/jenkins-api.sh log mobile-app/job/ios-build
-./scripts/jenkins-api.sh log mobile-app/job/ios-build 5
+./scripts/jenkins-api.sh log mobile-app/omnibus 5
 
 # Get job status
-./scripts/jenkins-api.sh status mobile-app/job/trigger
+./scripts/jenkins-api.sh status mobile-app/trigger/main
+
+# List jobs in a folder
+./scripts/jenkins-api.sh jobs mobile-app
+
+# Trigger multibranch scan
+./scripts/jenkins-api.sh scan mobile-app/trigger
+
+# Stop a running build
+./scripts/jenkins-api.sh stop mobile-app/trigger/main 3
 ```
 
-**Note:** Job paths use `/job/` between folder and job name (e.g., `folder/job/jobname`).
+**Note:** Job paths use slash separators (e.g., `mobile-app/trigger/main`), auto-converted to Jenkins `/job/` paths.
 
 ## Modifying Jobs
 
@@ -222,7 +230,7 @@ Always follow this workflow after completing code changes:
 3. **Deploy** to Jenkins:
    - If only `jobs/pipeline.groovy` changed: `docker cp jobs/pipeline.groovy jenkins-test:/var/jenkins_home/jobs-dsl/pipeline.groovy` then `./scripts/jenkins-api.sh build seed-job`
    - If `Dockerfile`, `plugins.txt`, or `casc/jenkins.yaml` changed: `docker-compose build && docker-compose up -d`
-4. **Test** by triggering a build: `./scripts/jenkins-api.sh build mobile-app/job/trigger/job/main CI_BRANCH=main`
+4. **Test** by triggering a build: `./scripts/jenkins-api.sh build mobile-app/trigger/main CI_BRANCH=main`
 5. **Verify** results via `./scripts/jenkins-api.sh status` and `./scripts/jenkins-api.sh log`
 
 ## Troubleshooting
