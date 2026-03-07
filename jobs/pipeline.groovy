@@ -4,11 +4,11 @@
 // ============================================
 
 def githubRepoOwner = 'gosuwachu'
-def githubRepoName = 'jenkinsfiles-test-app'
+def githubRepoName = 'mobile-app'
 def githubRepoUrl = "https://github.com/${githubRepoOwner}/${githubRepoName}.git"
 def githubCredentialsId = 'github-app'
 
-def ciRepoName = 'jenkinsfiles-test-app-ci'
+def ciRepoName = 'mobile-app-ci'
 def ciRepoUrl = "https://github.com/${githubRepoOwner}/${ciRepoName}.git"
 
 // ============================================
@@ -206,7 +206,7 @@ pipelineJob("${pipelineFolder}/ios-ui-tests") {
 
 multibranchPipelineJob('ci-repo') {
     displayName('CI Repo Tests')
-    description('Runs pytest on jenkinsfiles-test-app-ci PRs and main branch')
+    description('Runs pytest on mobile-app-ci PRs and main branch')
 
     branchSources {
         github {

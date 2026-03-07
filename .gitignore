@@ -1,4 +1,4 @@
 .env
 *.pem
-/jenkinsfiles-test-app/
+/mobile-app/
 .claude/

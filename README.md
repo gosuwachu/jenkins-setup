@@ -60,8 +60,8 @@ http://localhost:8080/job/seed-job/ → Build Now
 
 ## Companion Repos
 
-- **[jenkinsfiles-test-app](https://github.com/gosuwachu/jenkinsfiles-test-app)** — app repo, contains `ci/trigger.Jenkinsfile` (orchestrator)
-- **[jenkinsfiles-test-app-ci](https://github.com/gosuwachu/jenkinsfiles-test-app-ci)** — CI repo, child Jenkinsfiles:
+- **[mobile-app](https://github.com/gosuwachu/mobile-app)** — app repo, contains `ci/trigger.Jenkinsfile` (orchestrator)
+- **[mobile-app-ci](https://github.com/gosuwachu/mobile-app-ci)** — CI repo, child Jenkinsfiles:
 
 ```
 ci/

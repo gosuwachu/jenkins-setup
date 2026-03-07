@@ -21,8 +21,8 @@ Access at http://localhost:8080
 **Orchestrator + Commit Status API (GitHub)**
 
 - **Folder:** `pipeline`
-- **GitHub repo:** [jenkinsfiles-test-app](https://github.com/gosuwachu/jenkinsfiles-test-app)
-- **CI repo:** [jenkinsfiles-test-app-ci](https://github.com/gosuwachu/jenkinsfiles-test-app-ci) — child Jenkinsfiles (CI step definitions)
+- **GitHub repo:** [mobile-app](https://github.com/gosuwachu/mobile-app)
+- **CI repo:** [mobile-app-ci](https://github.com/gosuwachu/mobile-app-ci) — child Jenkinsfiles (CI step definitions)
 - **How it works:** Multibranch orchestrator discovers branches/PRs in the app repo. A thin stub `ci/trigger.Jenkinsfile` in the app repo loads the orchestrator logic from the CI repo via a Jenkins Shared Library (`vars/triggerPipeline.groovy`), using an inline `library` retriever (no pre-registration needed). The orchestrator triggers the omnibus `pipelineJob` with `JENKINSFILE` (path to Jenkinsfile in CI repo), `COMMIT_SHA` (pinned app repo commit), `CHANGE_ID` (PR number), and `CI_BRANCH` (CI repo branch, defaults to `main`) parameters; each child Jenkinsfile checks out the exact commit and publishes its own GitHub commit status (not Checks API)
 - **Pros:** Each child job owns its status reporting, `target_url` links to child job build page, individually re-triggerable from Jenkins
 - **Cons:** No "Re-run" button from GitHub (commit statuses don't support it), no rich check details
@@ -66,10 +66,10 @@ Child jobs publish their own commit statuses via `POST /repos/{owner}/{repo}/sta
 ```
 
 **Companion repos:**
-- [jenkinsfiles-test-app](https://github.com/gosuwachu/jenkinsfiles-test-app) — app repo, contains `ci/trigger.Jenkinsfile` (thin stub that loads shared library from CI repo)
-    - There is a clone of this repo here: /home/piotr/src/jenkins/jenkinsfiles-test-app (you can use it to make changes)
-- [jenkinsfiles-test-app-ci](https://github.com/gosuwachu/jenkinsfiles-test-app-ci) — CI repo, contains orchestrator (`vars/triggerPipeline.groovy` shared library) and child Jenkinsfiles in `ci/ios/` and `ci/android/` (step definitions)
-    - There is a clone of this repo here: /home/piotr/src/jenkins/jenkinsfiles-test-app-ci (you can use it to make changes)
+- [mobile-app](https://github.com/gosuwachu/mobile-app) — app repo, contains `ci/trigger.Jenkinsfile` (thin stub that loads shared library from CI repo)
+    - There is a clone of this repo here: /home/piotr/src/jenkins/mobile-app (you can use it to make changes)
+- [mobile-app-ci](https://github.com/gosuwachu/mobile-app-ci) — CI repo, contains orchestrator (`vars/triggerPipeline.groovy` shared library) and child Jenkinsfiles in `ci/ios/` and `ci/android/` (step definitions)
+    - There is a clone of this repo here: /home/piotr/src/jenkins/mobile-app-ci (you can use it to make changes)
 
 ## Common Commands
 
@@ -110,7 +110,7 @@ Use `scripts/jenkins-api.sh` for API interactions (handles crumb authentication 
 Edit `jobs/pipeline.groovy` then run the **seed-job** in Jenkins:
 - http://localhost:8080/job/seed-job/ → Build Now
 
-For orchestrator changes, edit `vars/triggerPipeline.groovy` in the CI repo and push — the stub in the app repo loads it dynamically via shared library. For child Jenkinsfile changes, also push to the CI repo (`jenkinsfiles-test-app-ci`) and re-run — the omnibus job pulls from the CI repo at `main`.
+For orchestrator changes, edit `vars/triggerPipeline.groovy` in the CI repo and push — the stub in the app repo loads it dynamically via shared library. For child Jenkinsfile changes, also push to the CI repo (`mobile-app-ci`) and re-run — the omnibus job pulls from the CI repo at `main`.
 
 Only rebuild Docker when changing `Dockerfile`, `plugins.txt`, or `casc/jenkins.yaml`:
 ```bash
@@ -178,7 +178,7 @@ Without a webhook, Jenkins polls GitHub every 5 minutes via `periodicFolderTrigg
 
 The GitHub App credential is used by child Jenkinsfiles (via `withCredentials`) to publish commit statuses. The multibranch orchestrator and child jobs use `github-pat` for SCM operations to prevent the github-checks plugin from auto-publishing checks.
 
-**GitHub App:** `jenkinsfiles-test-github-app` (App ID in `.env`)
+**GitHub App:** `jenkins-setup-github-app` (App ID in `.env`)
 
 **Required GitHub App permissions:**
 - Commit statuses: Read & Write (for commit status publishing)
@@ -218,7 +218,7 @@ This two-layer approach ensures non-collaborators cannot run CI or inject malici
 
 Always follow this workflow after completing code changes:
 1. **Commit** changes in all affected repos
-2. **Push** companion repos (jenkinsfiles-test-app, jenkinsfiles-test-app-ci) since Jenkins pulls from GitHub
+2. **Push** companion repos (mobile-app, mobile-app-ci) since Jenkins pulls from GitHub
 3. **Deploy** to Jenkins:
    - If only `jobs/pipeline.groovy` changed: `docker cp jobs/pipeline.groovy jenkins-test:/var/jenkins_home/jobs-dsl/pipeline.groovy` then `./scripts/jenkins-api.sh build seed-job`
    - If `Dockerfile`, `plugins.txt`, or `casc/jenkins.yaml` changed: `docker-compose build && docker-compose up -d`
