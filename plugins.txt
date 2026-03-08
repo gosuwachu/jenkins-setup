@@ -11,5 +11,6 @@ checks-api
 github-checks
 pipeline-utility-steps
 github-scm-trait-notification-context
+disable-github-multibranch-status
 generic-webhook-trigger
 rebuild

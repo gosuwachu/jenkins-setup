@@ -100,10 +100,9 @@ multibranchPipelineJob("${pipelineFolder}/trigger") {
             strategyId(2)
             trust(class: 'org.jenkinsci.plugins.github_branch_source.ForkPullRequestDiscoveryTrait\$TrustContributors')
         }
-        // Custom commit status context name
-        traits << 'org.jenkinsci.plugins.githubScmTraitNotificationContext.NotificationContextTrait' {
-            contextLabel('Jenkins')
-            typeSuffix(false)
+        // Disable plugin auto-publishing of commit statuses — the orchestrator publishes
+        // a 'Jenkins' status manually to point target_url at the CI dashboard
+        traits << 'com.adobe.jenkins.disable__github__multibranch__status.DisableStatusUpdateTrait' {
         }
     }
 }

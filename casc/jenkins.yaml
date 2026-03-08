@@ -4,6 +4,12 @@ jenkins:
   quietPeriod: 0
   mode: NORMAL
 
+  globalNodeProperties:
+    - envVars:
+        env:
+          - key: "DASHBOARD_URL"
+            value: "http://localhost:3000"
+
   securityRealm:
     local:
       allowsSignup: false
